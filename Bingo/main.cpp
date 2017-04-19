@@ -80,20 +80,20 @@ public:
         int count;
         count = 0;
         int rint;
-        rint = randomNumber(0, 15);
+        rint = randomNumber(0, 9);
         for (it = balls.begin(); it != balls.end(); it++) {
             chosenBall = *it;
             if (chosenBall->label[0] == s) { // if the ball we chose starts with the correct letter
                 if (count == rint) { // if we have gone a random number of times
-                    break; // we have it.
+                    Ball *b = new Ball(chosenBall->label);
+                    balls.erase(chosenBall);
+                    chosenBalls.insert(b);
+                    return b;
                 }
                 count++; // otherwise
             }
         }
-        Ball *b = new Ball(chosenBall->label);
-        balls.erase(chosenBall);
-        chosenBalls.insert(b);
-        return b;
+        return new Ball("BAD");
     }
     
     Ball *choose() {
@@ -128,8 +128,6 @@ public:
     Card () {
         Barrel *barrel = new Barrel();
         char ss[5] = {'B','I','N','G','O'};
-        int offset[5] = {0,16,32,48,64};
-        
         won = false;
         for (int col = 0; col < 5; col++) {
             for (int row = 0; row < 5; row++) {
@@ -148,6 +146,57 @@ public:
         }
     }
     
+    bool Bingo() {
+        for (int row = 0 ; row < 5; row++) {
+            if (RowCovered(row)) {
+                return true;
+            }
+        }
+        for (int col = 0 ; col < 5; col++) {
+            if (ColCovered(col)) {
+                return true;
+            }
+        }
+        if (Diag1() || Diag2()) {
+            return true;
+        }
+        return false;
+    }
+    
+    bool Diag1() {
+        for (int i = 0; i < 5; i++) {
+            if (!squares[i][i]->covered) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool Diag2() {
+        for (int j = 0; j < 5; j++) {
+            if (!squares[j][4-j]->covered) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    bool ColCovered(int col) {
+        for (int row = 0; row < 5; row++) {
+            if (! squares[col][row]->covered) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    bool RowCovered(int row) {
+        for (int col = 0; col < 5; col++) {
+            if (!squares[col][row]->covered) {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 
 

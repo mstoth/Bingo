@@ -72,8 +72,32 @@ public:
             balls.insert(new Ball("O" + to_string(i)));
         }
     }
+    
+    Ball *chooseFrom(char s) { // s is either 'B', 'I', 'N', 'G', or 'O'
+        // returns a ball beginning with the letter from s
+        Ball *chosenBall = new Ball("");
+        set<Ball *>::iterator it;
+        int count;
+        count = 0;
+        int rint;
+        rint = randomNumber(0, 15);
+        for (it = balls.begin(); it != balls.end(); it++) {
+            chosenBall = *it;
+            if (chosenBall->label[0] == s) { // if the ball we chose starts with the correct letter
+                if (count == rint) { // if we have gone a random number of times
+                    break; // we have it.
+                }
+                count++; // otherwise
+            }
+        }
+        Ball *b = new Ball(chosenBall->label);
+        balls.erase(chosenBall);
+        chosenBalls.insert(b);
+        return b;
+    }
+    
     Ball *choose() {
-        
+        // calling this returns a ball chosen at random from the barrel
         Ball *chosenBall = new Ball("");
         set<Ball *>::iterator it;
         int count;
@@ -98,30 +122,43 @@ public:
 
 class Card {
 public:
-    Marker *squares[5][5]; // a 5x5 matrix
+    Marker *squares[5][5];
     bool won;
     
-    Card (string s) {
+    Card () {
         Barrel *barrel = new Barrel();
-        string ss[5] = {"B","I","N","G","O"};
+        char ss[5] = {'B','I','N','G','O'};
         int offset[5] = {0,16,32,48,64};
         
         won = false;
         for (int col = 0; col < 5; col++) {
             for (int row = 0; row < 5; row++) {
-                Ball *b = new Ball("");
-                b=barrel->choose();
-                squares[col][row]->covered = false;
-                squares[col][row]->covering = b->label;
-                
+                squares[col][row]=new Marker();
+                if ((row == 2) && (col == 2)) {
+                    Ball *b = new Ball("FRE");
+                    squares[col][row]->covered = true;
+                    squares[col][row]->covering = b->label;
+                } else {
+                    Ball *b = new Ball("");
+                    b=barrel->chooseFrom(ss[col]);
+                    squares[col][row]->covered = false;
+                    squares[col][row]->covering = b->label;
+                }
             }
         }
     }
+    
 };
 
 
 int main(int argc, const char * argv[]) {
-    Barrel b;
-    Ball *b1;
+    Card *c = new Card();
+    for (int row = 0; row < 5; row++ ) {
+        cout << endl;
+        for (int col = 0; col < 5; col++ ) {
+            cout << c->squares[col][row]->covering << "\t";
+        }
+    }
+    cout << endl;
     return 0;
 }

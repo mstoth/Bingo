@@ -149,6 +149,7 @@ public:
     }
     
     void show() {
+        // displays the card on stdout with covered squares in brackets []
         for (int row=0; row<5; row++) {
             for (int col=0; col<5; col++) {
                 if (squares[col][row]->covered) {
@@ -235,7 +236,7 @@ int main(int argc, const char * argv[]) {
     Ball *b;
     Card *card = new Card();
     int nBalls = 0;
-    while (!card->Bingo()) {
+    while (!card->Bingo() && (barrel->balls.size()>0)) {
         nBalls++;
         b = barrel->choose();
         card->checkFor(b);

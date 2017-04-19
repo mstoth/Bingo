@@ -126,6 +126,8 @@ public:
     bool won;
     
     Card () {
+        // the card object constructor sets the random labels
+        // by using the chooseFrom function
         Barrel *barrel = new Barrel();
         char ss[5] = {'B','I','N','G','O'};
         won = false;
@@ -146,7 +148,31 @@ public:
         }
     }
     
+    void show() {
+        for (int row=0; row<5; row++) {
+            for (int col=0; col<5; col++) {
+                if (squares[col][row]->covered) {
+                    cout << "[" << squares [col][row]->covering << "]\t";
+                } else {
+                    cout << " " << squares[col][row]->covering << " \t";
+                }
+            }
+            cout << endl;
+        }
+    }
+    void checkFor(Ball *b) {
+        // checks for a square with the same label as the ball and covers the square if it is the same
+        for (int col=0; col<5;col++) {
+            for (int row=0; row < 5; row++) {
+                if (b->label == squares[col][row]->covering) {
+                    squares[col][row]->covered = true;
+                }
+            }
+        }
+    }
+    
     bool Bingo() {
+        // calling this returns true if we have Bingo
         for (int row = 0 ; row < 5; row++) {
             if (RowCovered(row)) {
                 return true;
@@ -164,6 +190,7 @@ public:
     }
     
     bool Diag1() {
+        // returns true if we have the diagonal from upper left
         for (int i = 0; i < 5; i++) {
             if (!squares[i][i]->covered) {
                 return false;
@@ -172,6 +199,7 @@ public:
         return true;
     }
     bool Diag2() {
+        // returns true if we have the diagonal from the lower left
         for (int j = 0; j < 5; j++) {
             if (!squares[j][4-j]->covered) {
                 return false;
@@ -181,6 +209,7 @@ public:
     }
     
     bool ColCovered(int col) {
+        // returns true if any of the columns are covered
         for (int row = 0; row < 5; row++) {
             if (! squares[col][row]->covered) {
                 return false;
@@ -190,6 +219,7 @@ public:
     }
     
     bool RowCovered(int row) {
+        // returns true if any of the rows are covered
         for (int col = 0; col < 5; col++) {
             if (!squares[col][row]->covered) {
                 return false;
@@ -201,13 +231,17 @@ public:
 
 
 int main(int argc, const char * argv[]) {
-    Card *c = new Card();
-    for (int row = 0; row < 5; row++ ) {
-        cout << endl;
-        for (int col = 0; col < 5; col++ ) {
-            cout << c->squares[col][row]->covering << "\t";
-        }
+    Barrel *barrel = new Barrel();
+    Card *card = new Card();
+    while (!card->Bingo()) {
+        Ball *b = new Ball("");
+        b = barrel->choose();
+        card->checkFor(b);
+        cout << b->label << endl;
     }
-    cout << endl;
+    if (card->Bingo()) {
+        cout << "Bingo!" << endl;
+        card->show();
+    }
     return 0;
 }

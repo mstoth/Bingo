@@ -232,9 +232,11 @@ public:
 
 int main(int argc, const char * argv[]) {
     Barrel *barrel = new Barrel();
+    Ball *b;
     Card *card = new Card();
+    int nBalls = 0;
     while (!card->Bingo()) {
-        Ball *b = new Ball("");
+        nBalls++;
         b = barrel->choose();
         card->checkFor(b);
         cout << b->label << endl;
@@ -242,6 +244,7 @@ int main(int argc, const char * argv[]) {
     if (card->Bingo()) {
         cout << "Bingo!" << endl;
         card->show();
+        cout << "it took " << nBalls << " balls." << endl;
     }
     return 0;
 }
